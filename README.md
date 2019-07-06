@@ -1,1 +1,1 @@
-# travel_time_CNN
+# CNN for Bus travel time prediction
