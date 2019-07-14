@@ -49,7 +49,7 @@ dfNorm$td=normalize((Data_19B$`2`)/3600)
 dfNorm$date<-Data_19B$`1`
 
 # Getting the window and bin size and calculating the NA tensor shape (Hrs) (4am to 10pm)
-Bin_size=0.5
+Bin_size=1
 st=4
 et=22
 
@@ -67,7 +67,17 @@ while (dedate <= end)
 {
   print(paste("Sebsetting df for the date:",dedate))
   dayno<-as.POSIXlt(dedate)$wday
+  #1<-sunday
+  #6<-saturday
   print(dayno)
+  if (dayno %in% c(1:5)){
+    dayno<-1
+  }
+  else{
+    dayno<-0
+  }
+  print(dayno)
+    
   
   # Creating an NA matrix for binning
   Mat=matrix(NA, nrow = (et-st)/Bin_size, ncol = 282)
@@ -91,13 +101,13 @@ while (dedate <= end)
     if (dim(selb)[1]!=0){
       mean_vector=as.vector(colMeans(selb))
       binned[ti,]=mean_vector
+      binned[ti,281]=dayno
     }
     #To put in normallized day and time even if segment data is unavailable
     else{
-      print("Filling only week and day..")
-      
+#      print("Filling only week and day..")
       binned[ti,281]=dayno
-      print(timo[ti+1])
+#      print(timo[ti+1])
       binned[ti,282]=(timo[ti+1]+timo[ti])/2
     }
   }
@@ -116,4 +126,4 @@ for (col in 1:(ncol(forexport)-2)){
 
 print(paste("The percentage of Na values is:",sum(is.na(forexport$`1`))/length(forexport$`1`)*100))
 
-write.csv(forexport,file = "from_R_19B_30min_n&f.csv",row.names = FALSE,col.names = FALSE)
+write.csv(forexport,file = "from_R_19B_1Hr_n&f.csv",row.names = FALSE,col.names = FALSE)
